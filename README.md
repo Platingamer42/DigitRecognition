@@ -38,7 +38,16 @@ Besides this file, there also is a "LICENSE" File. Please read it.
 If you get any errors with this script, you may have permission to ask for my help. But don't expect too much, since I will
 not tell you how you can contact me.
 
-I also wrote down links to code-snippets I found on pages like stackoverflow or snippets that inspired me at some point.
+I also commented links to code-snippets I found on pages like stackoverflow or snippets that inspired me at some point.
 
 
-Last updated: 25.07.2018
+INSTALLATION:
+- You will need python3 (Any Version should work) and following python-packages:
+- Tensorflow [backend] (You should be able to use theano as backend instead)
+- keras
+- scipy
+- numpy
+- opencv (Only on Windows; the PI-Version doesn't need it)
+
+
+Last updated: Today.

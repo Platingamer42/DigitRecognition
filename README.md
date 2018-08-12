@@ -1,3 +1,6 @@
+DISCLAIMER:
+This project is really messy - I will clean it up soon. 
+
 This package contains 3 different versions of my DigitRecognition-System:
 
 1) The "RasPI-Old"-Version:

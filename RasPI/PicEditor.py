@@ -57,7 +57,7 @@ class PicEditor:
         for i in range(img.size[0]):
             for j in range(img.size[1]):
                 if (px[i,j]) < 225:
-                    px[i,j] = int(px[i,j] - 0.5*px[i,j])
+                    px[i,j] = int(px[i,j] - 0.75*px[i,j])
                 else:
                     px[i,j] = 255
         return img

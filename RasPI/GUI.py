@@ -13,8 +13,8 @@ class GUI:
         self.display = pygame.display
         self.window = pygame.display.set_mode((800,480), pygame.HWSURFACE|pygame.FULLSCREEN)   
         
-        self.keras_switch_false = pygame.image.load("data/images/switch_FALSE.png")
-        self.keras_switch_true = pygame.image.load("data/images/switch_TRUE.png")
+        self.keras_switch_false = pygame.image.load(os.path.dirname(os.path.realpath(__file__)) + "/data/images/switch_FALSE.png")
+        self.keras_switch_true = pygame.image.load(os.path.dirname(os.path.realpath(__file__)) + "/data/images/switch_TRUE.png")
 
     def initCam(self):
         self.env = 0
@@ -103,8 +103,8 @@ class GUI:
 
 
     def solve_rnd_clicked(self):
+        img, solution, digit = self.main.RandomPicker.pickRandom()
         if not self.keras:
-            img, solution, digit = self.main.RandomPicker.pickRandom()
             img = img.resize((150,150))
             img.save("data/image_TEMP.png")
             pic = pygame.image.load("data/image_TEMP.png")
@@ -116,7 +116,6 @@ class GUI:
             self.main.TextOut.addText("[DATASET]: It's a {0}".format(solution))
             os.remove("data/image_TEMP.png")
         else:
-            img, solution, digit = self.main.RandomPicker.pickRandomKeras()
             img = img.resize((150,150))
             img.save("data/image_TEMP.png")
             pic = pygame.image.load("data/image_TEMP.png")
@@ -197,7 +196,7 @@ class GUI:
 
     def drawLoader(self):
         self.window.fill([230,230,230])
-        img_logo = pygame.image.load("data/images/icon_big.png")
+        img_logo = pygame.image.load(os.path.dirname(os.path.realpath(__file__))+"/data/images/icon_big.png")
         self.window.blit(img_logo,(250,25))
 
         self.textbox = pygame.draw.rect(self.window, (30,30,30), (0,354,800,480))
@@ -205,7 +204,7 @@ class GUI:
         self.display.flip()
 
     def drawMain(self):
-        self.img_shot = pygame.image.load("data/images/btn_shot.png")
+        self.img_shot = pygame.image.load(os.path.dirname(os.path.realpath(__file__))+"/data/images/btn_shot.png")
         self.img_stop = pygame.image.load("data/images/btn_stop.png")
 
         self.display.set_caption("A SMALL NEURONAL NETWORK!")
@@ -216,8 +215,6 @@ class GUI:
         img_plus = pygame.image.load("data/images/btn_plus.png")
         img_minus = pygame.image.load("data/images/btn_minus.png")
 
-        self.keras_switch_false = pygame.image.load("data/images/switch_FALSE.png")
-        self.keras_switch_true = pygame.image.load("data/images/switch_TRUE.png")
         self.keras = False
 
         self.window.fill([230,230,230])

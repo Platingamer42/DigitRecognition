@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 class AI_LITE:
     def __init__(self):
@@ -7,13 +8,14 @@ class AI_LITE:
         self.weights = []
 
     def feedforward(self, a):
+        a = np.reshape(a, (len(a), 1))
         for b, w in zip(self.biases, self.weights):
             a = sigmoid(np.dot(w, a)+b)
         return a
 
 
     def initialize(self):
-        wFile, bFile = open("data/saves/weights.txt", "r"), open("data/saves/biases.txt", "r")
+        wFile, bFile = open(os.path.dirname(os.path.realpath(__file__)) + "/data/saves/weights.txt", "r"), open(os.path.dirname(os.path.realpath(__file__)) + "/data/saves/biases.txt", "r")
         weights = []
         biases = []
 

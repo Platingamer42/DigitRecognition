@@ -6,9 +6,10 @@
 #However, if you want to understand this or even want to improve it's performance,
 #please hold this counter up-to-date:
 
-#Hours wasted on this project: 152
+#Hours wasted on this project: 160
 
-import mnist_loader, numpy, sys, os, time
+import numpy, sys, os, time
+from MNIST_LOADER import MNIST_LOADER
 from AI_LITE_Keras import AI_LITE_Keras
 from GUI import GUI
 from PIL import Image
@@ -25,15 +26,15 @@ class Main:
 
         self.TextOut = TextOut(self.GUI)
         self.TextOut.addText("[J.A.R.V.I.S.]: Loading Dataset! This could need a second!")
-        self.RandomPicker = RandomPicker()
+        self.mnist_loader = MNIST_LOADER()
+        self.mnist_loader.loadMNIST()
         self.TextOut.addText("[J.A.R.V.I.S.]: Dataset loadeded!")
+        self.RandomPicker = RandomPicker(self.mnist_loader)
         self.TextOut.addText("[J.A.R.V.I.S.]: Loading AI!")
         self.ai = AI_LITE()
         self.ai_keras = AI_LITE_Keras()
         self.TextOut.addText("[J.A.R.V.I.S.]: Loading ImageEditor!")
-        #time.sleep(3)
         self.PicEditor = PicEditor()
-        #self.TextOut.reset()
         self.GUI.drawMain()
 
         self.ai.initialize()

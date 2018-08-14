@@ -1,6 +1,8 @@
 import keras
 from mnist_loader_keras import extract_images, extract_labels
 
+#Could be updated to use the .pkl file. But it's not necessary.
+
 with open("data/datasets/MNIST_data/train-images-idx3-ubyte.gz", "rb") as f:
     train_images = extract_images(f)
 with open("data/datasets/MNIST_data/train-labels-idx1-ubyte.gz", "rb") as f:

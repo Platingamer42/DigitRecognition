@@ -12,8 +12,8 @@ class GUI:
         self.display = pygame.display
         self.window = pygame.display.set_mode((700,600), pygame.HWSURFACE)   
         
-        self.keras_switch_false = pygame.image.load("data/images/switch_FALSE.png")
-        self.keras_switch_true = pygame.image.load("data/images/switch_TRUE.png")
+        self.keras_switch_false = pygame.image.load(os.path.dirname(os.path.realpath(__file__)) + "/data/images/switch_FALSE.png")
+        self.keras_switch_true = pygame.image.load(os.path.dirname(os.path.realpath(__file__)) + "/data/images/switch_TRUE.png")
         self.keras = False    
     def handler(self):
         b = True
@@ -104,8 +104,8 @@ class GUI:
                         self.main.TextOut.addText("[STREAM]: INCREASED BRIGHTNESS. FACTOR: {}".format(round(factor,1)))
 
     def solve_rnd_clicked(self):
+        img, solution, digit = self.main.RandomPicker.pickRandom()
         if not self.keras:
-            img, solution, digit = self.main.RandomPicker.pickRandom()
             img = img.resize((300,300))
             img.save("data/image_TEMP.png")
             pic = pygame.image.load("data/image_TEMP.png")
@@ -117,7 +117,6 @@ class GUI:
             self.main.TextOut.addText("[DATASET]: It's a {0}".format(solution))
             os.remove("data/image_TEMP.png")
         else:
-            img, solution, digit = self.main.RandomPicker.pickRandomKeras()
             img = img.resize((300,300))
             img.save("data/image_TEMP.png")
             pic = pygame.image.load("data/image_TEMP.png")

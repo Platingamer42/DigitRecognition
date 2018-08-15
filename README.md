@@ -1,6 +1,5 @@
 DISCLAIMER:
 This project is really messy - I will clean it up soon. 
-Also, the datasets are missing at the moment - I have to gzip them first.
 
 This package contains 3 different versions of my DigitRecognition-System:
 

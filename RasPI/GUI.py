@@ -137,6 +137,8 @@ class GUI:
             self.main.TextOut.addText("[AI]: I would say it's a {0}. The activation-value of its neuron is {1}."
                         .format(digit, round(values[digit][0], 3)))
             self.main.TextOut.addText("[DATASET]: It's a {0}".format(solution))
+            if (int(digit) != int(solution)):
+                self.main.TextOut.addText("[TADASHI]: Look for another angle! [Too soon?]")
             os.remove("data/image_TEMP.png")
         else:
             img = img.resize((150,150))
@@ -192,11 +194,6 @@ class GUI:
                     for img in images[1]:
                         digit, values = self.main.sendThroughAI(self.main.translateToMNIST(path=None, img=img)) 
                         sol.append(digit)
-                    solStr = ""
-                    for x in sol:
-                        solStr += str(x)
-                    self.main.TextOut.addText("[AI]: Looks like a {0}. But this function works... GREAT! (Or, summed up: {1} [@Schlögl...])".format(solStr, np.sum(sol)))
-
                 else:
                     for img in images[1]:
                         normal_format = self.main.translateToMNIST(path=None, img=img)
@@ -204,11 +201,11 @@ class GUI:
                         keras_format = np.ndarray.flatten(asarray)
                         digit, values = self.main.sendThroughAI_Keras(keras_format)
                         sol.append(digit)
-                    solStr = ""
-                    for x in sol:
-                        solStr += str(x)
-                    self.main.TextOut.addText("[KERAS]: I would say that's a {0}. But this function isn't... the best. (Or, summed up: {1} [@Schlögl...])".format(solStr, np.sum(sol)))
-
+                for x in sol:
+                    solStr += str(x)
+                self.main.TextOut.addText("[AI]: Looks like a {0}. But this function works... GREAT! (Or, summed up: {1})".format(solStr, np.sum(sol)))
+                if solStr == "42":
+                    self.main.TextOut.addText("[STEVE]: I understand that reference!")
     #This method get's called automatically with every TextOut.addText!
     def updateTextBox(self, text):
         self.window.fill((30,30,30), self.textbox)

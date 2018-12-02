@@ -33,5 +33,4 @@ class AI_LITE:
         self.biases = biases
 
 def sigmoid(out):
-    print(out)
     return 1.0/(1.0+np.exp(-out))

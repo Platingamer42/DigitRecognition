@@ -116,8 +116,6 @@ class GUI:
             self.main.TextOut.addText("[AI]: I would say it's a {0}. The activation-value of its neuron is {1}."
                         .format(digit, round(values[digit][0], 3)))
             self.main.TextOut.addText("[DATASET]: It's a {0}".format(solution))
-            if digit != solution:
-                self.main.TextOut.addText("[TADASHI]: Look for another angle! [Too soon?]")
             os.remove("data/image_TEMP.png")
         else:
             img = img.resize((300,300))
@@ -129,7 +127,8 @@ class GUI:
             self.main.TextOut.addText("[KERAS]: I would say it's a {}. I am {}% sure about it!".format(digit, round(values[0][digit]*100,3)))
             self.main.TextOut.addText("[DATASET]: It's a {0}".format(solution))
             os.remove("data/image_TEMP.png")
-
+        if (int(digit) != int(solution)):
+            self.main.TextOut.addText("[TADASHI]: Look for another angle! [Too soon?]")
     def run_clicked(self):
         try:
             self.main.TextOut.addText("[J.A.R.V.I.S.]: Formatting image...")
@@ -173,10 +172,6 @@ class GUI:
                     for img in images[1]:
                         digit, values = self.main.sendThroughAI(self.main.translateToMNIST(path=None, img=img)) 
                         sol.append(digit)
-                    solStr = ""
-                    for x in sol:
-                        solStr += str(x)
-                    self.main.TextOut.addText("[AI]: Looks like a {0}. But this function works... GREAT! (Or, summed up: {1} [@Schlögl...])".format(solStr, np.sum(sol)))
 
                 else:
                     for img in images[1]:
@@ -185,10 +180,14 @@ class GUI:
                         keras_format = np.ndarray.flatten(asarray)
                         digit, values = self.main.sendThroughAI_Keras(keras_format)
                         sol.append(digit)
-                    solStr = ""
-                    for x in sol:
-                        solStr += str(x)
-                    self.main.TextOut.addText("[KERAS]: I would say that's a {0}. But this function isn't... the best. (Or, summed up: {1} [@Schlögl...])".format(solStr, np.sum(sol)))
+                solStr = ""
+                for x in sol:
+                    solStr += str(x)
+                self.main.TextOut.addText("[AI]: Looks like a {0}. But this function works... GREAT! (Or, summed up: {1})".format(solStr, np.sum(sol)))
+                if solStr == "42":
+                    self.main.TextOut.addText("[STEVE]: I understand that reference!")
+                
+    
     def updateTextBox(self, text):
         self.window.fill((30,30,30), self.textbox)
         y = 580
@@ -220,6 +219,10 @@ class GUI:
         #White rectangle with border:
         pygame.draw.rect(self.window, [122,34,113], (48,48,303,303), 2)
         self.pic = pygame.draw.rect(self.window, [255,255,255], (50, 50,300,300))
+
+        pic = pygame.image.load("data/images/logo.png")
+        self.pic = self.window.blit(pic, self.pic)
+        self.display.flip()
 
         #Place the buttons:
         self.btn_shot = self.window.blit(self.img_shot, (400,125))

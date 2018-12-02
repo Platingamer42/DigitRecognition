@@ -17,7 +17,7 @@ Code that isn't marked under a license was published under the Apache License:
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-At the moment there are only three third-party Files (With changes):
+At the moment there are only two third-party Files (With changes):
 the AI_Trainer and MNIST_CONVERTER (neuralnetworksanddeeplearning.com, tensorflow)
 
 

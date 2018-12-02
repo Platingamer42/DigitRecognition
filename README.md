@@ -1,11 +1,10 @@
 DISCLAIMER:
-<<<<<<< HEAD
 This package contains 3 different versions of a DigitRecognition-System:
 =======
 This project is really messy - I will clean it up soon. 
 
 This package contains 3 different versions of my DigitRecognition-System:
->>>>>>> 0faddc15b0b100d2d46d9e74113cf40877959c65
+
 
 UPDATE; 02.12.2018: Removed this version!
 1) The "RasPI-Old"-Version:
@@ -52,9 +51,4 @@ INSTALLATION:
 - numpy
 - opencv (Only on Windows; the PI-Version doesn't need it)
 
-
-<<<<<<< HEAD
 Last updated: 02.12.2018.
-=======
-Last updated: Today.
->>>>>>> 0faddc15b0b100d2d46d9e74113cf40877959c65

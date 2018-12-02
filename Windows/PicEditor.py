@@ -34,7 +34,7 @@ class PicEditor:
         return [True, images, oImage]
 
 
-    #checks if there could be a image (from left to right.)
+    #checks if there could be a digit (from left to right.)
     def split(self, img):
         img = self.removeWhites(img)
         px = np.array(img)

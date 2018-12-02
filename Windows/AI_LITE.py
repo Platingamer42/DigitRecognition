@@ -7,11 +7,11 @@ class AI_LITE:
         self.biases = []
         self.weights = []
 
-    def feedforward(self, a):
-        a = np.reshape(a, (len(a), 1))
+    def feedforward(self, out):
+        out = np.reshape(out, (len(out), 1))
         for b, w in zip(self.biases, self.weights):
-            a = sigmoid(np.dot(w, a)+b)
-        return a
+            out = sigmoid(np.dot(w, out)+b)
+        return out
 
 
     def initialize(self):
@@ -32,5 +32,6 @@ class AI_LITE:
         self.weights = weights
         self.biases = biases
 
-def sigmoid(z):
-   return 1.0/(1.0+np.exp(-z))
+def sigmoid(out):
+    print(out)
+    return 1.0/(1.0+np.exp(-out))

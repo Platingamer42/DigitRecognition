@@ -18,7 +18,7 @@ Code that isn't marked under a license was published under the Apache License:
 #limitations under the License.
 
 At the moment there are only three third-party Files (With changes):
-the mnist_loader_keras (tensorflow) and the AI_Trainer and the AI_Lite (neuralnetworksanddeeplearning.com)
+the AI_Trainer and MNIST_CONVERTER (neuralnetworksanddeeplearning.com, tensorflow)
 
 
 Last updated: 25.07.2018

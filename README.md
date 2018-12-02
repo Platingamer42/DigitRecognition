@@ -1,12 +1,10 @@
 DISCLAIMER:
-This project is really messy - I will clean it up soon. 
-Also, the datasets are missing at the moment - I have to gzip them first.
+This package contains 3 different versions of a DigitRecognition-System:
 
-This package contains 3 different versions of my DigitRecognition-System:
-
+UPDATE; 02.12.2018: Removed this version!
 1) The "RasPI-Old"-Version:
 Since I couldn't manage to run tensorflow, keras and scipy on my rasbperry pi at the beginning, I had to improvise.
-So I created this Version (You could say it's a "light" version) without a keras-implementation.
+I created this Version (You could say it's a "light" version) without a keras-implementation.
 
 2) The Windows-Version:
 This Version was the updated, but not running, version of the "RasPi-Old"-Version. It comes with a Video-Stream and keras.
@@ -28,9 +26,8 @@ Version 3 was tested on a Desktop-PC running Windows 7 and on a laptop running W
 but it worked fine. (Maybe there were some version-mismatches; the laptop wasn't up do date)
 
 
-If installing tensorflow and the other modules doesn't work on YOUR Pi, you might check this: 
+If installing tensorflow and the other modules doesn't work for you, you might check this: 
 https://medium.com/@abhizcc/installing-latest-tensor-flow-and-keras-on-raspberry-pi-aac7dbf95f2
-(You might need to pic other wheel-files, though)
 
 NOTICE:
 Besides this file, there also is a "LICENSE" File. Please read it.
@@ -43,11 +40,11 @@ I also commented links to code-snippets I found on pages like stackoverflow or s
 
 INSTALLATION:
 - You will need python3 (Any Version should work) and following python-packages:
-- Tensorflow [backend] (You should be able to use theano as backend instead)
+- Tensorflow [backend] (You should be able to use theano as backend instead, if you want to)
 - keras
 - scipy
 - numpy
 - opencv (Only on Windows; the PI-Version doesn't need it)
 
 
-Last updated: Today.
+Last updated: 02.12.2018.

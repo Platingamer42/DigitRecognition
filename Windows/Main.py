@@ -83,5 +83,5 @@ class Main:
         for x in data:
             newData.append([(255-x) / 255])
         return newData
-        
-main = Main()
+if __name__ == "__main__":       
+    main = Main()

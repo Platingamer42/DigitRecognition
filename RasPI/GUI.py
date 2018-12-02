@@ -16,14 +16,14 @@ class GUI:
         self.keras_switch_false = pygame.image.load(os.path.dirname(os.path.realpath(__file__)) + "/data/images/switch_FALSE.png")
         self.keras_switch_true = pygame.image.load(os.path.dirname(os.path.realpath(__file__)) + "/data/images/switch_TRUE.png")
 
+        self.streaming = False
     def initCam(self):
         self.env = 0
         self.keras = False   
         self.brightness = 80
         try:
-            self.camera = picamera.PiCamera()
-            self.camera.resolution = (150,150)
-
+            camera = picamera.PiCamera()
+            camera.close()
         except ImportError:
             self.env = 1
         except picamera.exc.PiCameraError:
@@ -37,17 +37,46 @@ class GUI:
         if self.env == 1:
             self.main.TextOut.addText("[J.A.R.V.I.S.]: You have no camera installed. I will pick the last picture that was made.")
             return False
-        
-        #A higher resolution might be "more beautiful", 
-        #but since we don't need it exactly and it only speeds the translation down
-        #this should be ok.
-        self.main.TextOut.addText("[J.A.R.V.I.S.] Running... This might need a moment.")
-        self.camera.brightness = self.brightness
-                        
-        self.camera.capture("data/image_RAW.png")
-        img = pygame.image.load("data/image_RAW.png")
-        self.window.blit(img, self.pic)
-        self.display.flip()
+           
+        self.streaming = True
+
+        with picamera.PiCamera() as camera:
+            camera.resolution = (150,150)
+            camera.brightness = self.brightness
+            camera.framerate = 60
+            stream = io.BytesIO()
+            while self.streaming:
+                camera.capture(stream, use_video_port=True,format='jpeg')
+                image = Image.open(stream)
+                pygameimg = pygame.image.fromstring(image.tobytes(), image.size, image.mode)
+                self.pic = self.window.blit(pygameimg, self.pic)
+                self.display.flip()
+                for event in pygame.event.get(pygame.MOUSEBUTTONDOWN):
+                    if event.button == 1:
+                        #take a shot
+                        if self.btn_shot.collidepoint(event.pos):
+                            self.main.TextOut.addText("[J.A.R.V.I.S.]: Taking picture... TIP: You can change the brightness!")
+                            self.streaming = False
+                            image.save("data/image_RAW.png")
+                            return
+                        #Brighntess:
+                        elif self.btn_minus.collidepoint(event.pos):
+                            if self.brightness > 0:
+                                self.brightness -=5
+                                camera.brightness -= 5
+                                self.main.TextOut.addText("[J.A.R.V.I.S.]: DECREASED BRIGHTNESS. It's now at {}%!"
+                                    .format(self.brightness))
+                            else:
+                                self.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 0%! (That's the low.)")
+                        elif self.btn_plus.collidepoint(event.pos):
+                            if self.brightness < 100:
+                                self.brightness +=5
+                                camera.brightness += 5
+                                self.main.TextOut.addText("[J.A.R.V.I.S.]: INCREASED BRIGHTNESS. It's now at {}%!"
+                                    .format(self.brightness))
+                            else:
+                                self.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 100%! (That's the peak.)")
+                stream = io.BytesIO()
     def handler(self):
         b = True
         while b:
@@ -58,16 +87,10 @@ class GUI:
                         self.main.TextOut.addText("[Ultron]: There are no strings on me!")
                         time.sleep(1)
                         continue                
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 2:
-                    b = False
-                    self.main.TextOut.addText("[Ultron]: There are no strings on me!")
-                    time.sleep(2)
-                    continue
-
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     #take a shot
                     if self.btn_shot.collidepoint(event.pos):
-                        self.main.TextOut.addText("[J.A.R.V.I.S.]: Taking picture... TIP: You can change the brightness!")
+                        self.main.TextOut.addText("[J.A.R.V.I.S.]: Starting (really low FPS) stream... TIP: You can change the brightness!")
                         self.takeAShot()
                     #SolveRandom
                     elif self.btn_solveRND.collidepoint(event.pos):
@@ -87,19 +110,19 @@ class GUI:
                         self.display.flip()
                     #Brighntess:
                     elif self.btn_minus.collidepoint(event.pos):
-                        if self.brightness < 100:
+                        if self.brightness > 0:
                             self.brightness -=5
                             self.main.TextOut.addText("[J.A.R.V.I.S.]: DECREASED BRIGHTNESS. It's now at {}%!"
                                 .format(self.brightness))
                         else:
-                            self.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 100%! (That's the peak.)")
+                            self.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 0%! (That's the low.)")
                     elif self.btn_plus.collidepoint(event.pos):
-                        if self.brightness > 0:
+                        if self.brightness < 100:
                             self.brightness +=5
                             self.main.TextOut.addText("[J.A.R.V.I.S.]: INCREASED BRIGHTNESS. It's now at {}%!"
                                 .format(self.brightness))
                         else:
-                            self.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 0%! (That's the low.)")
+                            self.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 100%! (That's the peak.)")
 
 
     def solve_rnd_clicked(self):
@@ -186,6 +209,7 @@ class GUI:
                         solStr += str(x)
                     self.main.TextOut.addText("[KERAS]: I would say that's a {0}. But this function isn't... the best. (Or, summed up: {1} [@Schlögl...])".format(solStr, np.sum(sol)))
 
+    #This method get's called automatically with every TextOut.addText!
     def updateTextBox(self, text):
         self.window.fill((30,30,30), self.textbox)
         y = 460
@@ -243,3 +267,4 @@ class GUI:
         self.btn_plus = self.window.blit(img_plus, (250,300))
 
         self.display.flip()
+

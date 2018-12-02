@@ -23,27 +23,18 @@ class Network:
         np.set_printoptions(threshold=np.nan, suppress=True)
         self.num_layers = len(sizes)
         self.sizes = sizes
-        #input-layer haben weder biases, noch weights
-        #-> Daher von 1 bis zum ende der Liste.
-        #.randn(LängeLayerX,DimensionOfArray)
+
         self.biases = [np.random.randn(y,1) for y in sizes[1:]]
 
 
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(sizes[:-1], sizes[1:])]
-        #zip() returnt ein tuple, eine nicht änderbare Liste
-        #Immer 0-0, 1-1 (e.g.: sizes=[1,2,4] -> zip(oben) zu (1,2), (2,4)
-        #print(self.weights)
-        
-    #simply send a variable through the damn network...     
+
     def feedforward(self, a):
         for b, w in zip(self.biases, self.weights):
             a = sigmoid(np.dot(w, a)+b)
         return a
-    #Wir brauchen noch SGD (Stochastic gradient descent) Methode, oder?    
     def SGD(self, training_data, epochs, mini_batch_size, eta, test_data = None):
-        #replaced xrange (python2) with range
-        #Problem: Might be slower (especialliy if the dataset is large!)
         training_data = list(training_data)
         if test_data:
             test_data = list(test_data)
@@ -74,7 +65,6 @@ class Network:
             print("The PEAK was at: {0} / {1}".format(current_peak, n_test))
             self.weights = bestWeights[:]
             self.biases = bestBiases[:]
-            #print(self.evaluate(self.test_data))
     def update_mini_batch(self, mini_batch, eta):
         """Update the network's weights and biases by applying
         gradient descent using backpropagation to a single mini batch.

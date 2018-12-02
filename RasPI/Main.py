@@ -22,6 +22,7 @@ class Main:
     def __init__(self):
         #start the gui!
         self.GUI = GUI(self)
+        os.system("sudo bash -c 'echo 0 > /sys/class/backlight/rpi_backlight/bl_power'")
         self.GUI.drawLoader()
 
         self.TextOut = TextOut(self.GUI)

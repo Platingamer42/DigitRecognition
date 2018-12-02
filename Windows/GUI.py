@@ -14,7 +14,8 @@ class GUI:
         
         self.keras_switch_false = pygame.image.load(os.path.dirname(os.path.realpath(__file__)) + "/data/images/switch_FALSE.png")
         self.keras_switch_true = pygame.image.load(os.path.dirname(os.path.realpath(__file__)) + "/data/images/switch_TRUE.png")
-        self.keras = False    
+        self.keras = False  
+
     def handler(self):
         b = True
         while b:
@@ -115,6 +116,8 @@ class GUI:
             self.main.TextOut.addText("[AI]: I would say it's a {0}. The activation-value of its neuron is {1}."
                         .format(digit, round(values[digit][0], 3)))
             self.main.TextOut.addText("[DATASET]: It's a {0}".format(solution))
+            if digit != solution:
+                self.main.TextOut.addText("[TADASHI]: Look for another angle! [Too soon?]")
             os.remove("data/image_TEMP.png")
         else:
             img = img.resize((300,300))

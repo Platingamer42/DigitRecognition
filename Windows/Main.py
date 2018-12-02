@@ -6,7 +6,7 @@
 #However, if you want to understand this or even want to improve it's performance,
 #please hold this counter up-to-date:
 
-#Hours wasted on this project: 160
+#Hours wasted on this project: 175
 
 import numpy, sys, os, time
 from MNIST_LOADER import MNIST_LOADER
@@ -57,7 +57,7 @@ class Main:
         img = Image.open("data/image_RAW.png").convert("L") #Black-White!
         img = self.PicEditor.recolor(img) #Calls the function that returns the image, but the white pixels are whiter and the black are blacker!
         if min(img.getdata()) == 255:
-            self.TextOut.addText("[J.A.R.V.I.S.]: I can't handle this picture. It's all-white!")
+            self.TextOut.addText("[J.A.R.V.I.S.]: I can't handle this picture.")
             return [False]
         img = self.PicEditor.removeWhites(img) 
         all = self.PicEditor.getAll(img)
@@ -77,7 +77,7 @@ class Main:
             for x in data:
                 newData.append([(255 - x) / 255])
             return newData
-        #Not working via path, but via a img directly:
+        #Not working via path; via the img directly:
         data = list(img.getdata())
         newData = []
         for x in data:

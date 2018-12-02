@@ -1,6 +1,4 @@
-This project was written by Julian Mandl. However, I didn't create ALL of the code:
-
-The mnist_loader, AI_Trainer and AI_Lite classes are inspired by or copied versions of code found within the book "Neural Networks and Deep Leraning" by Micheal Nielsen.
+The AI_Trainer class is inspired by "Neural Networks and Deep Leraning" (Micheal Nielsen)
 The code was originally published under the MIT-License:
 
 #MIT License
@@ -20,7 +18,7 @@ The said code can be found in this GitHub-repository: https://github.com/mnielse
 or in this repository: https://github.com/MichalDanielDobrzanski/DeepLearningPython35 , an updated version; written in Python 3
 
 
-Furthermore, the methods used in mnist_loader_keras was extracted from tensorflow's python.platform.mnist; which was published under the Apache License, Version 2.0:
+Furthermore, the methods used in MNIST_CONVERTER was extracted from tensorflow's python.platform.mnist; which was published under the Apache License, Version 2.0:
 
 # "Copyright 2016 The TensorFlow Authors. All Rights Reserved.
 #

@@ -2,5 +2,4 @@
 ignoreme.txt
 .vscode
 Windows/__pycache__
-Raspi-OLD/__pycache__
-Raspi/*
+Raspi-OLD/*

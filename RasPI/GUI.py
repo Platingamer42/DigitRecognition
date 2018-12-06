@@ -146,8 +146,6 @@ class GUI:
             self.main.TextOut.addText("[AI]: I would say it's a {0}. The activation-value of its neuron is {1}."
                         .format(digit, round(values[digit][0], 3)))
             self.main.TextOut.addText("[DATASET]: It's a {0}".format(solution))
-            if (int(digit) != int(solution)):
-                self.main.TextOut.addText("[TADASHI]: Look for another angle! [Too soon?]")
             os.remove("data/image_TEMP.png")
         else:
             pic = pygame.image.load("data/image_TEMP.png")
@@ -157,7 +155,8 @@ class GUI:
             self.main.TextOut.addText("[KERAS]: I would say it's a {}. I am {}% sure about it!".format(digit, round(values[0][digit]*100,3)))
             self.main.TextOut.addText("[DATASET]: It's a {0}".format(solution))
             os.remove("data/image_TEMP.png")
-
+        if (int(digit) != int(solution)):
+            self.main.TextOut.addText("[TADASHI]: Look for another angle! [Too soon?]")
     def run_clicked(self):
         try:
             self.main.TextOut.addText("[J.A.R.V.I.S.]: Formatting image...")
@@ -214,6 +213,8 @@ class GUI:
                 self.main.TextOut.addText("[AI]: Looks like a {0}. But this function works... GREAT! (Or, summed up: {1})".format(solStr, np.sum(sol)))
                 if solStr == "42":
                     self.main.TextOut.addText("[STEVE]: I understand that reference!")
+                elif solStr == "19":
+                    self.main.TextOut.addText("[J.A.R.V.I.S.]: So... you read Stephen King?")
     #This method get's called automatically with every TextOut.addText!
     def updateTextBox(self, text):
         self.window.fill((30,30,30), self.textbox)

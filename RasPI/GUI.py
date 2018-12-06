@@ -80,7 +80,6 @@ class GUI:
     def handler(self):
         b = True
         off_clicked = 0
-        listeners = Listeners(self)
         while b:
             for event in pygame.event.get():
                 if event.type == pygame.KEYUP:
@@ -112,13 +111,109 @@ class GUI:
                         self.display.flip()
                     #Brighntess:
                     elif self.btn_minus.collidepoint(event.pos):
-                        brightness_DOWN()
+                        if self.brightness > 0:
+                            self.brightness -=5
+                            self.main.TextOut.addText("[J.A.R.V.I.S.]: DECREASED BRIGHTNESS. It's now at {}%!"
+                                .format(self.brightness))
+                        else:
+                            self.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 0%! (That's the low.)")
                     elif self.btn_plus.collidepoint(event.pos):
-                        brightness_UP()
+                        if self.brightness < 100:
+                            self.brightness +=5
+                            self.main.TextOut.addText("[J.A.R.V.I.S.]: INCREASED BRIGHTNESS. It's now at {}%!"
+                                .format(self.brightness))
+                        else:
+                            self.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 100%! (That's the peak.)")
                     #Shutdown:
                     elif self.btn_off.collidepoint(event.pos):
-                        shutdown_clicked(off_clicked)
-                        
+                        self.main.TextOut.addText("[J.A.R.V.I.S.]: Press this button again, if you want to kill me.")
+                        if off_clicked == 0:
+                            off_clicked = pygame.time.get_ticks()
+                        #shutdown, if <= 10 secs between two clicks
+                        elif pygame.time.get_ticks() - off_clicked <= 10000:
+                            os.system("sudo shutdown -h now")
+
+    def solve_rnd_clicked(self):
+        img, solution, digit = self.main.RandomPicker.pickRandom()
+        img = img.resize((250, 250))
+        img.save("data/image_TEMP.png")
+
+        if not self.keras:
+            pic = pygame.image.load("data/image_TEMP.png")
+            self.pic = self.window.blit(pic, self.pic)
+            self.display.flip()                     
+            digit, values = self.main.sendThroughAI(digit)
+            self.main.TextOut.addText("[AI]: I would say it's a {0}. The activation-value of its neuron is {1}."
+                        .format(digit, round(values[digit][0], 3)))
+            self.main.TextOut.addText("[DATASET]: It's a {0}".format(solution))
+            if (int(digit) != int(solution)):
+                self.main.TextOut.addText("[TADASHI]: Look for another angle! [Too soon?]")
+            os.remove("data/image_TEMP.png")
+        else:
+            pic = pygame.image.load("data/image_TEMP.png")
+            self.pic = self.window.blit(pic, self.pic)
+            self.display.flip()
+            digit, values = self.main.sendThroughAI_Keras(digit)
+            self.main.TextOut.addText("[KERAS]: I would say it's a {}. I am {}% sure about it!".format(digit, round(values[0][digit]*100,3)))
+            self.main.TextOut.addText("[DATASET]: It's a {0}".format(solution))
+            os.remove("data/image_TEMP.png")
+
+    def run_clicked(self):
+        try:
+            self.main.TextOut.addText("[J.A.R.V.I.S.]: Formatting image...")
+            images = self.main.runImage()
+        except FileNotFoundError:
+            self.main.TextOut.addText("[J.A.R.V.I.S.]: An error occured. You need to take another picture.")
+            return
+        if not images[0]:
+            self.main.TextOut.addText("[J.A.R.V.S.]: I can't format this image. Please try again.")
+        
+        else:
+            if len(images[1]) == 1:
+                imageResized = images[1][0].resize((250,250))
+                imageResized.save("data/imageResized.png")
+                img = pygame.image.load("data/imageResized.png")
+                self.pic = self.window.blit(img, self.pic)
+                self.display.flip()
+                os.remove("data/imageResized.png")
+                if not self.keras:
+                    digit, values = self.main.sendThroughAI(self.main.translateToMNIST(path=None, img=images[1][0]))
+                    self.main.TextOut.addText("[AI]: I would say it's a {0}. The activation-value of its neuron is {1}."
+                        .format(digit, round(values[digit][0], 3)))
+
+                else:
+                    normal_format = self.main.translateToMNIST(None, images[1][0])
+                    asarray = np.asarray(normal_format)
+                    keras_format = np.ndarray.flatten(asarray)
+
+                    digit, values = self.main.sendThroughAI_Keras(keras_format)
+                    self.main.TextOut.addText("[KERAS]: I would say it's a {0}. I am {1}% sure about this.".format(digit, round(values[0][digit]*100, 3)))
+            else:
+                imageResized = images[2].resize((250,250))
+                imageResized.save("data/imageResized.png")
+                img = pygame.image.load("data/imageResized.png")
+                self.pic = self.window.blit(img, self.pic)
+                self.display.flip()
+                os.remove("data/imageResized.png")
+                
+                sol = []
+                if not self.keras:
+                    for img in images[1]:
+                        digit, values = self.main.sendThroughAI(self.main.translateToMNIST(path=None, img=img)) 
+                        sol.append(digit)
+                else:
+                    for img in images[1]:
+                        normal_format = self.main.translateToMNIST(path=None, img=img)
+                        asarray = np.asarray(normal_format)
+                        keras_format = np.ndarray.flatten(asarray)
+                        digit, values = self.main.sendThroughAI_Keras(keras_format)
+                        sol.append(digit)
+                solStr = ""
+                for x in sol:
+                    solStr += str(x)
+                self.main.TextOut.addText("[AI]: Looks like a {0}. But this function works... GREAT! (Or, summed up: {1})".format(solStr, np.sum(sol)))
+                if solStr == "42":
+                    self.main.TextOut.addText("[STEVE]: I understand that reference!")
     #This method get's called automatically with every TextOut.addText!
     def updateTextBox(self, text):
         self.window.fill((30,30,30), self.textbox)
@@ -184,117 +279,6 @@ class GUI:
         #poweroff
         self.btn_off = self.window.blit(img_off, (760, 25))
 
+
         self.display.flip()
 
-
-#==============LISTENERS
-class Listeners: 
-    def __init__(self, GUI):
-        self.GUI = GUI
-    def brightness_UP(self):
-        if GUI.brightness < 100:
-            GUI.brightness +=5
-            GUI.main.TextOut.addText("[J.A.R.V.I.S.]: INCREASED BRIGHTNESS. It's now at {}%!"
-                .format(GUI.brightness))
-        else:
-            GUI.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 100%! (That's the peak.)")
-
-    def brightness_DOWN(self):
-        if self.brightness > 0:
-            GUI.brightness -=5
-            GUI.main.TextOut.addText("[J.A.R.V.I.S.]: DECREASED BRIGHTNESS. It's now at {}%!"
-                .format(GUI.brightness))
-        else:
-            GUI.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 0%! (That's the low.)")
-
-    def shutdown_clicked(self, off_clicked):
-        GUI.main.TextOut.addText("[J.A.R.V.I.S.]: Press this button again, if you want to kill me.")
-        if off_clicked == 0:
-            off_clicked = pygame.time.get_ticks()
-            #shutdown, if <= 10 secs between two clicks
-        elif pygame.time.get_ticks() - off_clicked <= 10000:
-            GUI.main.TextOut.addText("[Ultron]: There are no string on me.")
-            time.sleep(1)
-            os.system("sudo shutdown -h now")
-
-    def solve_rnd_clicked(self):
-        img, solution, digit = GUI.main.RandomPicker.pickRandom()
-        img = img.resize((250, 250))
-        img.save("data/image_TEMP.png")
-
-        if not GUI.keras:
-            pic = pygame.image.load("data/image_TEMP.png")
-            GUI.pic = GUI.window.blit(pic, GUI.pic)
-            GUI.display.flip()                     
-            digit, values = GUI.main.sendThroughAI(digit)
-            GUI.main.TextOut.addText("[AI]: I would say it's a {0}. The activation-value of its neuron is {1}."
-                        .format(digit, round(values[digit][0], 3)))
-            GUI.main.TextOut.addText("[DATASET]: It's a {0}".format(solution))
-            if (int(digit) != int(solution)):
-                GUI.main.TextOut.addText("[TADASHI]: Look for another angle! [Too soon?]")
-            os.remove("data/image_TEMP.png")
-        else:
-            pic = pygame.image.load("data/image_TEMP.png")
-            GUI.pic = GUI.window.blit(pic, GUI.pic)
-            GUI.display.flip()
-            digit, values = GUI.main.sendThroughAI_Keras(digit)
-            GUI.main.TextOut.addText("[KERAS]: I would say it's a {}. I am {}% sure about it!".format(digit, round(values[0][digit]*100,3)))
-            GUI.main.TextOut.addText("[DATASET]: It's a {0}".format(solution))
-            os.remove("data/image_TEMP.png")
-
-    def run_clicked(self):
-        try:
-            GUI.main.TextOut.addText("[J.A.R.V.I.S.]: Formatting image...")
-            images = GUI.main.runImage()
-        except FileNotFoundError:
-            GUI.main.TextOut.addText("[J.A.R.V.I.S.]: An error occured. You need to take another picture.")
-            return
-        if not images[0]:
-            GUI.main.TextOut.addText("[J.A.R.V.S.]: I can't format this image. Please try again.")
-        
-        else:
-            if len(images[1]) == 1:
-                imageResized = images[1][0].resize((250,250))
-                imageResized.save("data/imageResized.png")
-                img = pygame.image.load("data/imageResized.png")
-                GUI.pic = GUI.window.blit(img, self.pic)
-                GUI.display.flip()
-                os.remove("data/imageResized.png")
-                if not GUI.keras:
-                    digit, values = GUI.main.sendThroughAI(GUI.main.translateToMNIST(path=None, img=images[1][0]))
-                    GUI.main.TextOut.addText("[AI]: I would say it's a {0}. The activation-value of its neuron is {1}."
-                        .format(digit, round(values[digit][0], 3)))
-
-                else:
-                    normal_format = GUI.main.translateToMNIST(None, images[1][0])
-                    asarray = np.asarray(normal_format)
-                    keras_format = np.ndarray.flatten(asarray)
-
-                    digit, values = GUI.main.sendThroughAI_Keras(keras_format)
-                    GUI.main.TextOut.addText("[KERAS]: I would say it's a {0}. I am {1}% sure about this.".format(digit, round(values[0][digit]*100, 3)))
-            else:
-                imageResized = images[2].resize((250,250))
-                imageResized.save("data/imageResized.png")
-                img = pygame.image.load("data/imageResized.png")
-                GUI.pic = GUI.window.blit(img, GUI.pic)
-                GUI.display.flip()
-                os.remove("data/imageResized.png")
-                
-                sol = []
-                if not GUI.keras:
-                    for img in images[1]:
-                        digit, values = GUI.main.sendThroughAI(GUI.main.translateToMNIST(path=None, img=img)) 
-                        sol.append(digit)
-                else:
-                    for img in images[1]:
-                        normal_format = GUI.main.translateToMNIST(path=None, img=img)
-                        asarray = np.asarray(normal_format)
-                        keras_format = np.ndarray.flatten(asarray)
-                        digit, values = GUI.main.sendThroughAI_Keras(keras_format)
-                        sol.append(digit)
-                solStr = ""
-                for x in sol:
-                    solStr += str(x)
-                GUI.main.TextOut.addText("[AI]: Looks like a {0}. But this function works... GREAT! (Or, summed up: {1})".format(solStr, np.sum(sol)))
-                if solStr == "42":
-                    GUI.main.TextOut.addText("[STEVE]: I understand that reference!")

@@ -10,7 +10,7 @@
 
 import numpy, sys, os, time
 from MNIST_LOADER import MNIST_LOADER
-from AI_Keras import AI_KERAS
+from AI_KERAS import AI_KERAS
 from GUI import GUI
 from PIL import Image
 from TextOut import TextOut

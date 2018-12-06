@@ -1,5 +1,5 @@
 import numpy as np
-import os
+import os, json
 
 class AI_LITE:
     def __init__(self):
@@ -13,7 +13,7 @@ class AI_LITE:
             out = sigmoid(np.dot(w, out)+b)
         return out
 
-
+    '''
     def initialize(self):
         wFile, bFile = open(os.path.dirname(os.path.realpath(__file__)) + "/data/saves/weights.txt", "r"), open(os.path.dirname(os.path.realpath(__file__)) + "/data/saves/biases.txt", "r")
         weights = []
@@ -31,6 +31,12 @@ class AI_LITE:
 
         self.weights = weights
         self.biases = biases
-
+    '''
+    def initialize(self):
+        f = open(os.path.dirname(os.path.realpath(__file__)) + "/data/saves/network", "r")
+        data = json.load(f)
+        f.close()
+        self.weights = [np.array(w) for w in data["w"]]
+        self.biases = [np.array(b) for b in data["b"]]
 def sigmoid(out):
     return 1.0/(1.0+np.exp(-out))

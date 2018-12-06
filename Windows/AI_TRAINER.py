@@ -15,7 +15,7 @@
 #FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 #WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import random, pickle, gzip, os
+import random, pickle, gzip, os, json
 import numpy as np
 
 class Network:
@@ -161,6 +161,7 @@ training_data, test_data = load_data_wrapper()[0], load_data_wrapper()[1]
 net = Network([784,30,10])
 net.SGD(training_data,30,10,3,test_data)
 
+"""
 b = net.biases[:]
 w = net.weights[:]
 
@@ -185,3 +186,10 @@ wFile.close()
 
 net.weights = weights
 net.biases = biases
+"""
+
+data = {"w": [weight.tolist() for weight in weights],
+        "b": [bias.tolist() for bias in biases]}
+
+filenew = open(os.path.dirname(os.path.realpath(__file__)) + "/data/saves/network", "w")
+json.dump(data, filenew)

@@ -3,3 +3,6 @@ ignoreme.txt
 .vscode
 Windows/__pycache__
 Raspi-OLD/*
+Windows/translateJSON.py
+Windows/data/saves/BACKUP/*
+Raspi/data/saves/BACKUP/*

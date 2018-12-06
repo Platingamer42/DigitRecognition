@@ -10,7 +10,7 @@
 
 import numpy, sys, os, time
 from MNIST_LOADER import MNIST_LOADER
-from AI_LITE_Keras import AI_LITE_Keras
+from AI_KERAS import AI_KERAS
 from GUI import GUI
 from PIL import Image
 from TextOut import TextOut
@@ -32,7 +32,7 @@ class Main:
         self.RandomPicker = RandomPicker(self.mnist_loader)
         self.TextOut.addText("[J.A.R.V.I.S.]: Loading AI!")
         self.ai = AI_LITE()
-        self.ai_keras = AI_LITE_Keras()
+        self.ai_keras = AI_KERAS()
         self.TextOut.addText("[J.A.R.V.I.S.]: Loading ImageEditor!")
         self.PicEditor = PicEditor()
         self.GUI.drawMain()

@@ -3,7 +3,6 @@ import os, json
 
 class AI_LITE:
     def __init__(self):
-        np.set_printoptions(threshold=np.nan, suppress=True)
         self.biases = []
         self.weights = []
 

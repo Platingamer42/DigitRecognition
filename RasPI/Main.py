@@ -20,23 +20,29 @@ from PicEditor import PicEditor
 
 class Main:
     def __init__(self):
-        #start the gui!
+        #start the gui! - We have to update everything manually here :S
         self.GUI = GUI(self)
         os.system("sudo bash -c 'echo 0 > /sys/class/backlight/rpi_backlight/bl_power'")
         self.GUI.drawLoader()
 
         self.TextOut = TextOut(self.GUI)
         self.TextOut.addText("[J.A.R.V.I.S.]: Loading Dataset! This could need a second!")
+        self.GUI.display.update()
         self.mnist_loader = MNIST_LOADER()
         self.mnist_loader.loadMNIST()
         self.TextOut.addText("[J.A.R.V.I.S.]: Dataset loadeded!")
+        self.GUI.display.update()
         self.RandomPicker = RandomPicker(self.mnist_loader)
         self.TextOut.addText("[J.A.R.V.I.S.]: Loading AI!")
+        self.GUI.display.update()
         self.ai = AI_LITE()
         self.ai_keras = AI_KERAS()
         self.TextOut.addText("[J.A.R.V.I.S.]: Loading ImageEditor!")
+        self.GUI.display.update()
         self.PicEditor = PicEditor()
         self.TextOut.addText("[J.A.R.V.I.S.]: Loading Camera!")
+        self.GUI.display.update()
+
         self.GUI.initCam()
         self.GUI.drawMain()
 
@@ -58,17 +64,11 @@ class Main:
 
     def runImage(self):
         img = Image.open("data/image_RAW.png").convert("L") #Black-White!
-        img = self.PicEditor.recolor(img) #Calls the function that returns the image, but the white pixels are whiter and the black are blacker!
         if min(img.getdata()) == 255:
-            self.TextOut.addText("[J.A.R.V.I.S.]: I can't handle this picture. It's all-white!")
-            return [False]
-        img = self.PicEditor.removeWhites(img) 
-        all = self.PicEditor.getAll(img)
-        if not all[0]:
-            img = self.PicEditor.resize(img)    
-            img = self.PicEditor.recenter(img)
-            return [True, [img]]
-        return [True, all[1], all[2]]
+            self.TextOut.addText("[J.A.R.V.I.S.]: I can't handle this picture.")
+            return (False, None, None)
+        images = self.PicEditor.getAll(img)[1]
+        return (True, images, img)
 
     #Get a png and translate it... - Returns an array containing arrays (1 pxl = 1 array...)
     def translateToMNIST(self, path=None,img=None):

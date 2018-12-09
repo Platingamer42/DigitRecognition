@@ -152,10 +152,10 @@ class GUI:
     def kerasClicked(self):
         if self.keras:
             self.keras = False
-            self.keras_switch = self.window.blit(self.keras_switch_false, (150,370))
+            self.keras_switch = self.window.blit(self.keras_switch_false, (125,300))
         else:
             self.keras = True
-            self.keras_switch = self.window.blit(self.keras_switch_true, (150,370))
+            self.keras_switch = self.window.blit(self.keras_switch_true, (125,300))
         self.rects_to_update.append(self.keras_switch)
     def drawClicked(self):
         self.btn_draw = self.window.blit(self.img_draw_stop, self.btn_draw)

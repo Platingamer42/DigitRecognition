@@ -8,7 +8,7 @@ class Drawer:
     def drawStream(self):
         screen = pygame.Surface((250,250))
         screen.fill((255,255,255))
-        self.drawRect = self.GUI.updateDrawer(screen)
+        self.drawRect = self.GUI.updateSurface(screen)
         pygame.event.clear()
         past_mouse_x, past_mouse_y = 0, 0
         drawing = False
@@ -19,7 +19,7 @@ class Drawer:
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1 and drawing:    
                     self.pygame.image.save(screen, "data/image_RAW.png")
                     self.GUI.run_clicked()  
-                    self.GUI.updateDrawer(screen)
+                    self.GUI.updateSurface(screen)
                     drawing = False
                
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:    
@@ -48,7 +48,7 @@ class Drawer:
                     pygame.draw.line(screen, (0,0,0), (past_mouse_x, past_mouse_y), (mouse_x, mouse_y), 8)
                     pygame.draw.circle(screen, (0,0,0), (mouse_x, mouse_y), 4)
                 past_mouse_x, past_mouse_y = mouse_x, mouse_y
-                self.GUI.updateDrawer(screen)
+                self.GUI.updateSurface(screen)
                 
             self.GUI.display.update(self.GUI.rects_to_update)
             self.GUI.rects_to_update = []

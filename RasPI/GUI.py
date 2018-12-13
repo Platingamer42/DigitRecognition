@@ -4,24 +4,45 @@ from PIL import ImageEnhance
 import numpy as np
 import picamera
 from Drawer import Drawer
+import pygame.camera
 
 class GUI:
     def __init__(self, main):
         pygame.init()
         self.main = main
         self.display = pygame.display
-        self.window = pygame.display.set_mode((800,480), pygame.FULLSCREEN)   
+        self.window = pygame.display.set_mode((800,480),pygame.FULLSCREEN)   
         self.drawer = Drawer(self)
 
         self.keras_switch_false = pygame.image.load(os.path.dirname(os.path.realpath(__file__)) + "/data/images/switch_FALSE.png")
         self.keras_switch_true = pygame.image.load(os.path.dirname(os.path.realpath(__file__)) + "/data/images/switch_TRUE.png")
 
+        self.keras = False   
         self.streaming = False
         self.rects_to_update = []
+
+        #needed for webcam-camera, which doesn't work yet.
+        self.camera = None
+        self.camsize = (320,240)
+        
+        self.clock = pygame.time.Clock()
+
+
     def initCam(self):
         self.env = 0
-        self.keras = False   
         self.brightness = 85
+
+        #USB-Webcam
+        '''
+        pygame.camera.init()
+        if not pygame.camera.list_cameras():
+            self.main.TextOut.addText("[J.A.R.V.I.S.]: I couldn't find a camera!")
+            self.env = 1
+        else:
+            #The first shall be it!
+            self.camera = pygame.camera.Camera(pygame.camera.list_cameras()[0], self.camsize)
+        '''
+        #UNCOMMENT, IF A PICAMERA IS USED!
         try:
             camera = picamera.PiCamera()
             camera.close()
@@ -33,7 +54,61 @@ class GUI:
             self.main.TextOut.addText("[J.A.R.V.I.S.]: Initializing!")
         else:
             self.main.TextOut.addText("[J.A.R.V.I.S.]: I couldn't find a camera! You won't be able to take pictures.") 
+        
+    #Doesn't work, because the pygame#Camera#set_controls function doesn't seem to work correctly...
+    def takeAShot2(self):
+        if self.env == 1:
+            self.main.TextOut.addText("[J.A.R.V.I.S.]: You have no camera installed. I will pick the last picture that was made.")
+            return False      
+        self.streaming = True
+        self.btn_shot = self.window.blit(self.img_stop, self.btn_shot)
+        self.rects_to_update.append(self.btn_shot)
+        self.camera.start()
+       
+        streamSurface = pygame.Surface(self.camsize)
+        while self.streaming:
+            if self.camera.query_image():
+                self.camera.get_image(streamSurface)
+                blitsurface = pygame.transform.scale(streamSurface, (250,250))
+                self.updateSurface(blitsurface)
+            
+            for event in pygame.event.get():
+                if event.type != pygame.MOUSEBUTTONDOWN:
+                    continue
+                if event.button == 1:
+                    #take a shot
+                    if self.btn_shot.collidepoint(event.pos):
+                        self.main.TextOut.addText("[J.A.R.V.I.S.]: Taking picture... TIP: You can change the brightness!")
+                        self.streaming = False
+                        pygame.image.save(streamSurface, "data/image_RAW.png")
+                        pygame.event.clear()
+                        self.btn_shot = self.window.blit(self.img_shot, self.btn_shot)
+                        self.rects_to_update.append(self.btn_shot)
+                        continue
+                    #Brighntess:
+                    elif self.btn_minus.collidepoint(event.pos):
+                        if self.brightness > 0:
+                            self.brightness -=5
+                            camera.brightness -= 5
+                            self.main.TextOut.addText("[J.A.R.V.I.S.]: DECREASED BRIGHTNESS. It's now at {}%!"
+                                .format(self.brightness))
+                        else:
+                            self.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 0%! (That's the low.)")
+                    elif self.btn_plus.collidepoint(event.pos):
+                        if self.brightness < 100:
+                            self.brightness +=5
+                            camera.brightness += 5
+                            self.main.TextOut.addText("[J.A.R.V.I.S.]: INCREASED BRIGHTNESS. It's now at {}%!"
+                                .format(self.brightness))
+                        else:
+                            self.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 100%! (That's the peak.)")
+            #Display-Managment (I AM THE GAME-LOOOP)
+            self.display.update(self.rects_to_update)
+            self.rects_to_update = []
+            self.clock.tick(60)            
+        self.camera.stop()
 
+    #NIU by default, but still here.
     def takeAShot(self):
         if self.env == 1:
             self.main.TextOut.addText("[J.A.R.V.I.S.]: You have no camera installed. I will pick the last picture that was made.")
@@ -90,11 +165,9 @@ class GUI:
                             else:
                                 self.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 100%! (That's the peak.)")
                 stream = io.BytesIO()
-
     def handler(self):
         b = True
         off_clicked = 0
-        clock = pygame.time.Clock()
         while b:
             for event in pygame.event.get():
                 if event.type == pygame.KEYUP:
@@ -136,8 +209,8 @@ class GUI:
                             self.main.TextOut.addText("[J.A.R.V.I.S.]: The Brightness is already on 100%! (That's the peak.)")
                     #Shutdown:
                     elif self.btn_off.collidepoint(event.pos):
-                        self.main.TextOut.addText("[J.A.R.V.I.S.]: Press this button again, if you want to kill me.")
                         if off_clicked == 0:
+                            self.main.TextOut.addText("[J.A.R.V.I.S.]: Press this button again, if you want to kill me.")
                             off_clicked = pygame.time.get_ticks()
                         #shutdown, if <= 10 secs between two clicks
                         elif pygame.time.get_ticks() - off_clicked <= 10000:
@@ -148,7 +221,7 @@ class GUI:
 
             self.display.update(self.rects_to_update)
             self.rects_to_update = []    
-            clock.tick(60)
+            self.clock.tick(60)
     def kerasClicked(self):
         if self.keras:
             self.keras = False
@@ -253,10 +326,11 @@ class GUI:
                     self.main.TextOut.addText("[STEVE]: I understand that reference!")
                 elif solStr == "19":
                     self.main.TextOut.addText("[J.A.R.V.I.S.]: So... you read Stephen King?")
-    def updateDrawer(self, subscreen):
-        drawerRect = self.window.blit(subscreen, (25,25))
-        self.rects_to_update.append(drawerRect)
-        return drawerRect #We need this one only once, but... yeah... maybe sometimes.
+                    
+    def updateSurface(self, subscreen):
+        surfaceRect = self.window.blit(subscreen, (25,25))
+        self.rects_to_update.append(surfaceRect)
+        return surfaceRect 
 
     #This method get's called automatically with every TextOut.addText!
     def updateTextBox(self, text):
@@ -324,7 +398,7 @@ class GUI:
         self.btn_plus = self.window.blit(img_plus, (250,300))
 
         #poweroff
-        self.btn_off = self.window.blit(img_off, (760, 25))
+        self.btn_off = self.window.blit(img_off, (748, 25))
 
         self.display.flip()
 

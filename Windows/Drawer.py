@@ -30,13 +30,20 @@ class Drawer:
                         pygame.event.clear()
                         return
                     #KERAS
-                    if self.GUI.keras_switch.collidepoint(event.pos):
+                    elif self.GUI.keras_switch.collidepoint(event.pos):
                         self.GUI.kerasClicked()
+                        self.GUI.run_clicked()
+
+                    #DRAWING
                     elif self.drawRect.collidepoint(event.pos):
                         mouse_x = pygame.mouse.get_pos()[0] - 50
                         mouse_y = pygame.mouse.get_pos()[1] - 50
                         past_mouse_x, past_mouse_y = mouse_x, mouse_y
                         drawing = True 
+                    #TRASH
+                    elif self.GUI.btn_trash.collidepoint(event.pos):
+                        screen.fill((255,255,255))
+                        self.GUI.updateDrawer(screen)
             if drawing:
                 mouse_state = pygame.mouse.get_pressed()[0]
             

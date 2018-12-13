@@ -247,6 +247,7 @@ class GUI:
         img_run = pygame.image.load("data/images/btn_run.png")
         img_plus = pygame.image.load("data/images/btn_plus.png")
         img_minus = pygame.image.load("data/images/btn_minus.png")
+        img_trash = pygame.image.load("data/images/btn_trash.png")
 
         self.window.fill([230,230,230])
         
@@ -263,6 +264,9 @@ class GUI:
 
         self.btn_run = self.window.blit(img_run, (550,125))
         self.btn_draw = self.window.blit(self.img_draw, (550,225))
+        #trash-symbol
+        self.btn_trash = self.window.blit(img_trash, (660, 240))
+
 
         #keras-switch:
         font = pygame.font.Font('data/arial.ttf', 14)

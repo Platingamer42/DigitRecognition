@@ -218,6 +218,9 @@ class GUI:
                     #Draw
                     elif self.btn_draw.collidepoint(event.pos):
                         self.drawClicked()
+                    #Trash
+                    elif self.btn_trash.collidepoint(event.pos):
+                        self.main.TextOut.addText("[J.A.R.V.I.S.]: This button resets the drawing area.")
 
             self.display.update(self.rects_to_update)
             self.rects_to_update = []    
@@ -365,6 +368,7 @@ class GUI:
         img_plus = pygame.image.load("data/images/btn_plus.png")
         img_minus = pygame.image.load("data/images/btn_minus.png")
         img_off = pygame.image.load("data/images/btn_poweroff.png")
+        img_trash = pygame.image.load("data/images/btn_trash.png")
 
         self.keras = False
 
@@ -383,6 +387,8 @@ class GUI:
 
         self.btn_run = self.window.blit(img_run, (550,125))
         self.btn_draw = self.window.blit(self.img_draw, (550,225))
+        #trash-symbol next to this
+        self.btn_trash = self.window.blit(img_trash, (660, 240))
 
         #Place the textfield:
         self.textbox = pygame.draw.rect(self.window, (30,30,30), (0,354,800,480))

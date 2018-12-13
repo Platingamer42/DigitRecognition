@@ -11,7 +11,6 @@ class AI_KERAS:
         if self.cnn:
             x = x.reshape(1,28,28,1)
             output = self.model.predict(x)
-            print(output)
         else:
             output = self.model.predict(x)
         return output
